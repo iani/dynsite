@@ -1,0 +1,10 @@
+* Dynsite help files
+
+DynSite is an extension of the html publishing scheme of orgmode in Emacs, which simplifies the way that multiple projects with different configurations are defined for one or many websites. 
+
+See [[./dynsite-help.org]] and [[./dynsite-command-reference.org]] and [[./project-properties.org]] for documentation. 
+
+The full source and documentation is found at: https://github.com/iani/dynsite
+
+Ioannis Zannos [2012-03-26 Mon 23:21]
+

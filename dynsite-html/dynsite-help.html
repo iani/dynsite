@@ -1,0 +1,693 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>DynSite: Dynamic Org 2 HTML Project definition</title>
+<!-- 2013-09-27 Fri 17:56 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+<meta name="generator" content="Org-mode"/>
+<meta name="author" content="Ioannis Zannos"/>
+
+<link rel="stylesheet" href="./css/org.css" type="text/css"/>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012  Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">DynSite: Dynamic Org 2 HTML Project definition</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">Orgmode publishing and DynSite working principles</a></li>
+<li><a href="#sec-2">Quick setup</a></li>
+<li><a href="#sec-3">Defining a site</a></li>
+<li><a href="#sec-4">Site File Structure</a>
+<ul>
+<li><a href="#sec-4-1">Source and Target Folders</a></li>
+<li><a href="#sec-4-2">Project Definition</a></li>
+</ul>
+</li>
+<li><a href="#sec-5">The Project List</a>
+<ul>
+<li><a href="#sec-5-1">Project inheritance</a></li>
+<li><a href="#sec-5-2">Org and static projects</a></li>
+</ul>
+</li>
+<li><a href="#sec-6">Installing a Site</a></li>
+<li><a href="#sec-7">Publish+Upload a Site</a></li>
+<li><a href="#sec-8">Working with multiple sites</a>
+<ul>
+<li><a href="#sec-8-1">Adding a site</a></li>
+<li><a href="#sec-8-2">Choosing one site to work with, from the list of known sites</a></li>
+</ul>
+</li>
+<li><a href="#sec-9">Generate projects</a></li>
+<li><a href="#sec-10">Publish selected project</a></li>
+<li><a href="#sec-11">Utilities</a>
+<ul>
+<li><a href="#sec-11-1">Add project files to refile targets</a></li>
+<li><a href="#sec-11-2">Force export of all files</a></li>
+<li><a href="#sec-11-3">Dired site directory</a></li>
+<li><a href="#sec-11-4">Edit configuration files</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<p>
+This is a guide to using the dynamic org-to-html publishing project definition scheme called DynSite. 
+</p>
+
+<p>
+DynSite is an extension of the default project publishing scheme of orgmode. Instead of writing project definitions in emacs-lisp as is done in the original orgmode publishing scheme, the present extension allows one to define and customize the projects by putting them in folders and to define their custom parameters in plain text, using orgmode markup.
+</p>
+
+<div id="outline-container-sec-1" class="outline-2">
+<h2 id="sec-1">Orgmode publishing and DynSite working principles</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+The html publishing scheme of orgmode allows one to define groups of files which share the same configuration (headers, footers, css style files etc.), so that these files are puglished together with one command.  Such a group of files is called a project.  It is possible to define many projects.  One can publish a project with the command org-publish-project.  To define a project in orgmode one has to code its specifications in emacs-lisp.  Coding this is cumbersome, especially because any html strings that will be included in the files as headers, footers etc. must be coded as lisp-strings, which requires double-escaping html characters such as tag delimiters and other elements.  The present tool, DynSite, makes the project definition process easier by letting one define a projects parameters in a config file written in org mode.  It simplifies the specification of projects  further by grouping these in subfolders of one folder.  A group of projects contained under one folder is called a <i>site</i>.  In DynSite, one defines one site by specifying the following three elements: 
+</p>
+
+<ol class="org-ol">
+<li>Site source folder: The location of the folder which contains the project subfolders. 
+</li>
+<li>Site target folder: The folder where these projects should be published as html.
+</li>
+<li>The method for uploading the published html files to the server. 
+</li>
+</ol>
+
+<p>
+The folder structure of the published files inide the site target folder is the same as the folder structure of the site source. 
+</p>
+
+<p>
+To define a project inside the Site source folder one creates a file named config.org in it. This file contains the configuration of the project, i.e. web page name, headers, footers, style etc.  One can put a config.org file in any subfolder of the site, including a subfolder of a folder that already contains a project.  Project characteristics are inherited.  Projects are named after the name of the folder which contains them.  For example, consider a site source folder named "mysite", containing the following folders and files: 
+</p>
+
+<pre class="example">
+mysite
+   config.org
+   index.org
+   ...
+   proj1/
+      config.org
+      proj1page1.org
+      ...
+   proj2/
+      config.org
+      proj2.org
+      ...
+      subproj1/
+          config.org
+          subproj1.org
+          ...
+</pre>
+
+<p>
+The above folders and files define the projects <code>mysite</code>, <code>proj1</code>, <code>proj2</code> and <code>subproj1</code>. <code>subproj1</code> inherits its specifications from <code>proj2</code>. <code>proj1</code> and <code>proj2</code> inherit their style specifications from project <code>mysite</code>.  DynSite provides commands for publishing all projects of a site, or a selected project by name. 
+</p>
+
+<p>
+One can define any number of sites in DynSite. But only one site is current at any time. One chooses the current site by its name with the command org-choose-site. 
+</p>
+</div>
+</div>
+<div id="outline-container-sec-2" class="outline-2">
+<h2 id="sec-2">Quick setup</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+@&lt;b&gt;For a summary of all commands and quick configuration guide for setting up a site see <a href="./dynsite-command-reference.html">here</a>.@&lt;/b&gt;
+</p>
+</div>
+</div>
+<div id="outline-container-sec-3" class="outline-2">
+<h2 id="sec-3">Defining a site</h2>
+<div class="outline-text-2" id="text-3">
+<p>
+Here is the definition of a site which takes its source files (org) from <code>~/SitesSource/</code> and publishes the result in <code>~/Sites/</code>. (Note: <code>~/Sites/</code> is the default folder for a user's personal home page files in MacOS X). 
+</p>
+
+<pre class="example">
+(org-install-site 
+     '(
+;; name of your site: 
+	"my-site" 
+;; path of the folder containing the all org project files:
+	"~/SitesSource" 
+;; path of the folder where the html files will be published:
+	"~/Sites" 
+;; this string will be used as address to upload files to web with rsync:
+	"earlabor@earlab.org:public_html/larigot-tests/"
+))
+</pre>
+
+<p>
+In MacOS X one can browse the resulting site by accessing it via the <code>file</code> protocol: <a href="file:////Users/username/Sites/index.html">file:////Users/username/Sites/index.html</a> or, if Apache is running on the local computer, with: <a href="http://localhost/~username/">http://localhost/~username/</a> .
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-4" class="outline-2">
+<h2 id="sec-4">Site File Structure</h2>
+<div class="outline-text-2" id="text-4">
+</div><div id="outline-container-sec-4-1" class="outline-3">
+<h3 id="sec-4-1">Source and Target Folders</h3>
+<div class="outline-text-3" id="text-4-1">
+<p>
+For each site defned with DynSite expects all org-to-html projects to be stored as subfolders of one single folder. For example, if one has 3 projects named project1, project2 and project3, one could place them in one folder named org as follows: 
+</p>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col class="left"/>
+
+<col class="left"/>
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="left">path</th>
+<th scope="col" class="left">contents</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="left">/users/user1/websites/org</td>
+<td class="left">top folder containing all projects</td>
+</tr>
+
+<tr>
+<td class="left">/users/user1/website/org/project1</td>
+<td class="left">all files (and folders) of project1</td>
+</tr>
+
+<tr>
+<td class="left">/users/user1/website/org/project2</td>
+<td class="left">all files (and folders) of project2</td>
+</tr>
+
+<tr>
+<td class="left">/users/user1/website/org/project2</td>
+<td class="left">all files (and folders) of project3</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+These projects are published in subfolders of the single target folder specified in the site definition, preserving the same structure as the source folder. 
+</p>
+
+<p>
+It is possible to work with several different sites, where each site has its own source folder (the org project files), its own target folder (the published html files) and a url for uploading the rendered html files to a server using rsync. See <a href="#sec-8">Working with multiple sites</a> below. 
+</p>
+</div>
+</div>
+<div id="outline-container-sec-4-2" class="outline-3">
+<h3 id="sec-4-2">Project Definition</h3>
+<div class="outline-text-3" id="text-4-2">
+<p>
+There is only one rule for defining a project: 
+</p>
+
+<p>
+<b>If</b> a folder is contained in the top folder containing all projects <b>and</b> this folder contains a file called <i>config.org</i> <b>then</b> this folder becomes a project folder. 
+</p>
+
+<p>
+This means: To define a new project for publishing, you must do 2 things: 
+</p>
+
+<ol class="org-ol">
+<li>Create a folder for the project, which is contained inside the top folder holding all projects, or one of its subfolders
+</li>
+<li>Create a file called config.org inside the top level of the folder that contains the project. 
+</li>
+</ol>
+
+<p>
+The contents of the file config.org define the properties of the project, i.e. they customize the project. In orgmode, the publishing options of a project are defined as (emacs-lisp) properties. These are described in section "13.1.5 Options for the HTML/LaTeX exporters" of the org-info documentation (type "meta-x org-info" to enter the org-info documentation, then go to section (menu item) Publishing, subsection Configuration, subsubsection "Publishing options"). The config.org file lets one define these properties in a simpler way, without writing them as lisp expressions.  This is done as follows: 
+</p>
+
+<p>
+A property consists of a name (the name of the property) and a value (the value of the property). In the config.org file, the name of the property is given as a top-level org-node entry and the value of the property is given as the contents of the entry. For example, to define the property "author" giving it the value "Tom Jones", one puts the following node in the config.org file: 
+</p>
+
+<pre class="example">
+* author
+Tom Jones
+</pre>
+
+<p>
+A special case are properties whose values are not strings (such as the string "Tom Jones" above), but lisp objects such as numbers, functions or other types of objects. These are indicated in the config.org file by appending ":" to the name of the property, and are entered as expressions that are evaluated by lisp, in the same line as the property name. For example, 
+If a property needs to have a numerical value, or an otherwise computed value, this value is written as an expression that can be evaluated by lisp, in a single line. For example, to set the property "section-numbers" to the value "nil", one writes: 
+</p>
+
+<pre class="example">
+* section-numbers: nil
+</pre>
+
+<p>
+Second example: To set the property "headline-levels" to 3, one writes: 
+</p>
+
+<pre class="example">
+* headline-levels: 3
+</pre>
+
+<p>
+Following example compares the configuration of a project using lisp source code with the same configuration done using config.org in DynSite. 
+</p>
+
+<pre class="example">
+;; Webtools project. Configuration using the original emacs-lisp code method of orgmode: 
+(add-to-list 'org-publish-project-alist
+	'("webtools"
+	 :base-directory "~/Dropbox/orgshared/sites/org/earlab/tools/webtools/"
+	 :base-extension "org"
+	 :publishing-directory "~/Dropbox/orgshared/sites/html/earlab/tools/webtools/"
+	 :section-numbers nil
+	 :table-of-contents nil
+	 :recursive t
+	 :publishing-function org-publish-org-to-html
+	 :headline-levels 1        
+	 :auto-preamble t
+	 :preamble 
+	 "
+&lt;div id=\"toc\"&gt;
+&lt;a href=\"http://earlab.org/\"&gt;Earlab Home&lt;/a&gt; | 
+&lt;a href=\"http://earlab.org/tools/webtools\"&gt;Web Tools Home&lt;/a&gt; | 
+&lt;a href=\"http://earlab.org/tools/webtools/gettingstart.html\"&gt;Getting Started&lt;/a&gt; | 
+&lt;a href=\"http://earlab.org/tools/webtools/javascript.html\"&gt;JavaScript&lt;/a&gt; | 
+&lt;a href=\"http://earlab.org/tools/webtools/projects.html\"&gt;Projects&lt;/a&gt; | 
+&lt;a href=\"http://earlab.org/tools/webtools/tutorials.html\"&gt;Tutorials&lt;/a&gt; | 
+&lt;a href=\"http://earlab.org/tools/webtools/topics.html\"&gt;Topics&lt;/a&gt; | 
+&lt;a href=\"http://earlab.org/tools/webtools/links.html\"&gt;Links&lt;/a&gt; |  
+&lt;/div&gt; 
+
+&lt;div style = \"position: absolute; top: 10px; left: 10px; \"&gt;
+ &lt;FORM METHOD=\"POST\" ACTION=\"/tools/webtools/cgi-bin/3.0/search_engine.cgi\"&gt;&lt;INPUT TYPE=\"text\" SIZE=\"20\" NAME=\"keywords\" MAXLENGTH=\"80\"&gt;&lt;INPUT TYPE=\"SUBMIT\" VALUE=\"Search\"&gt;&lt;/FORM&gt; 
+&lt;/div&gt;
+
+"
+	 :style "
+&lt;link rel=\"stylesheet\" href=\"http://ambiant.earlab.org/css/org.css\" type=\"text/css\"/&gt;
+"
+	 :auto-index t
+	 :table-of-contents t
+	 :author "Ioannis Zannos &amp; Aris Bezas"
+	 :email  "zannos AT gmail DOT com  &amp; aribezas AT gmail DOT com"
+)
+	)
+
+;; Copy files from tool to ambiant workshop2011
+(add-to-list 'org-publish-project-alist
+	'("copy-webtools-files"
+	 :base-directory "~/Dropbox/orgshared/sites/org/earlab/tools/webtools/"
+	 :base-extension "css\\|js\\|png\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf\\|zip"
+	 :publishing-directory "~/Dropbox/orgshared/sites/html/earlab/tools/webtools/"
+	 :recursive t
+	 :publishing-function org-publish-attachment
+	 )
+
+       )
+</pre>
+
+<p>
+To define the same project using DynSite one writes the following text in the config.org file which is contained in the folder that holds the org files of he project: 
+</p>
+
+<pre class="example">
+* section-numbers: nil
+* table-of-contents: nil
+* recursive: t
+* headline-levels: 1
+* auto-preamble: t
+* preamble
+&lt;div id="toc"&gt;
+&lt;a href="http://earlab.org/"&gt;Earlab Home&lt;/a&gt; | 
+&lt;a href="http://earlab.org/tools/webtools"&gt;Web Tools Home&lt;/a&gt; | 
+&lt;a href="http://earlab.org/tools/webtools/gettingstart.html"&gt;Getting Started&lt;/a&gt; | 
+&lt;a href="http://earlab.org/tools/webtools/javascript.html"&gt;JavaScript&lt;/a&gt; | 
+&lt;a href="http://earlab.org/tools/webtools/projects.html"&gt;Projects&lt;/a&gt; | 
+&lt;a href="http://earlab.org/tools/webtools/tutorials.html"&gt;Tutorials&lt;/a&gt; | 
+&lt;a href="http://earlab.org/tools/webtools/topics.html"&gt;Topics&lt;/a&gt; | 
+&lt;a href="http://earlab.org/tools/webtools/links.html"&gt;Links&lt;/a&gt; | 
+&lt;/div&gt;
+* style
+&lt;link rel="stylesheet" href="./css/org.css" type="text/css"/&gt;
+* auto-index: t
+* table-of-contents: t
+* author: "Ioannis Zannos &amp; Aris Bezas"
+* email:  "zannos AT gmail DOT com  &amp; aribezas AT gmail DOT com"
+</pre>
+
+<p>
+Note that the definition of the project is much shorter in config.org, because many items are automatically provided by DynSite based on the location and name of the folder which contains the project: 
+</p>
+<ul class="org-ul">
+<li>The name of the project is provided by the name of the folder that contains the config.org and the org content files.
+</li>
+<li>The base directory is inferred automatically.
+</li>
+<li>The publishing directory is inferred automatically.
+</li>
+<li>The publishing function is provided automatically
+</li>
+<li>The project for publishing configuration and media files (css, png, mp3, etc) is created automatically
+</li>
+</ul>
+
+<p>
+You can add a site to the list of sites as follows (but this will not make it current):
+</p>
+<div class="example:">
+<p>
+(add-to-list 'org-sites org-current-site '(&lt;site name&gt; &lt;org path&gt; &lt;html path&gt; &lt;upload url&gt;))
+</p>
+
+</div>
+
+<p>
+Example: 
+</p>
+<div class="example:">
+<p>
+(add-to-list 'org-sites
+      '(
+        "larigot-earlab" 
+        "~/Dropbox/orgshared/sites/org/larigot-tests" 
+        "~/Dropbox/orgshared/sites/html/larigot-tests" 
+        "earlabor@earlab.org:public_html/larigot-tests/"))
+</p>
+
+</div>
+
+<p>
+To add a site and make it current use the function org-install-site as described in the next section. 
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-5" class="outline-2">
+<h2 id="sec-5">The Project List</h2>
+<div class="outline-text-2" id="text-5">
+</div><div id="outline-container-sec-5-1" class="outline-3">
+<h3 id="sec-5-1">Project inheritance</h3>
+<div class="outline-text-3" id="text-5-1">
+<p>
+If a project folder <i>a</i> contains a folder <i>b</i> that defines another project, then the project defined in folder <i>b</i> inherits the properties of project <i>a</i>. The property values set in <i>b</i> overwrite any properties with the same name set by <i>a</i>. <i>b</i> is called a subproject of <i>a</i>, and <i>a</i> is called a superproject of <i>b</i>.
+</p>
+
+<p>
+The name of each project is generated from the name of the folder that contains it, and the names of its superprojects, separated by "&lt;". For example, if we have two projects contained in folders like this: 
+</p>
+
+<p>
+./mainproject
+./mainproject/subproject
+</p>
+
+<p>
+then the project contained in folder ./mainproject/subproject will be called subproject&lt;mainproject. 
+</p>
+</div>
+</div>
+<div id="outline-container-sec-5-2" class="outline-3">
+<h3 id="sec-5-2">Org and static projects</h3>
+<div class="outline-text-3" id="text-5-2">
+<p>
+For each folder that contains a config.org file, DynSite generates three projects: 
+</p>
+
+<ol class="org-ol">
+<li>A project for the org files of the site only. This contains the org files which will be translated to html. 
+</li>
+<li>A "static" project containing non-org files of the site (css, jpeg, mp3, pdf or other files). These files are simply copied over to the target folder as-is, without any translation. 
+</li>
+<li>A project including both the org-files and the non-org files. 
+</li>
+</ol>
+
+<p>
+The non-org file projects are named by appending "-static" to the name of the org project. 
+The projects containing both the org and the non-org files are named by appending "-all" to the name of the org project. 
+</p>
+
+<p>
+Additionally there are generated 3 project groups: "all", "all-all", and "all-static" that contain all org, static and combined org/static projects of a site. 
+</p>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-6" class="outline-2">
+<h2 id="sec-6">Installing a Site</h2>
+<div class="outline-text-2" id="text-6">
+<p>
+Run this to install your own site in the list of sites and make it the current site to work on: 
+</p>
+<div class="example:">
+<p>
+(org-install-site &lt;site definition list&gt;)
+</p>
+
+</div>
+
+<p>
+Example: 
+</p>
+
+<pre class="example">
+(org-install-site 
+     '(
+;; name of your site: 
+	"larigot-earlab" 
+;; path of the folder containing the all org project files:
+	"~/Dropbox/orgshared/sites/org/larigot-tests" 
+ ;; path of the folder where the html files will be published:
+	"~/Dropbox/orgshared/sites/html/larigot-tests" 
+ ;; this string will be used as address to upload files to web with rsync:
+	"earlabor@earlab.org:public_html/larigot-tests/"
+))
+</pre>
+</div>
+</div>
+<div id="outline-container-sec-7" class="outline-2">
+<h2 id="sec-7">Publish+Upload a Site</h2>
+<div class="outline-text-2" id="text-7">
+<p>
+(meta-x:) org-republish-and-upload-site
+</p>
+
+<p>
+This command is bound to the keyboard shortcut <b>super-meta-control-shift-p</b> (where "super" is the cmd key on the mac or the windows key on windows, and meta is opt or alt or escape depending on your keyboard and emacs setup). 
+</p>
+
+<p>
+This is the most basic command for publishing a site. It generates all the projects of the site from the config.org files, publishes the projects, then opens a shell window and types the rsync command for uploading the site. 
+</p>
+</div>
+</div>
+<div id="outline-container-sec-8" class="outline-2">
+<h2 id="sec-8">Working with multiple sites</h2>
+<div class="outline-text-2" id="text-8">
+</div><div id="outline-container-sec-8-1" class="outline-3">
+<h3 id="sec-8-1">Adding a site</h3>
+<div class="outline-text-3" id="text-8-1">
+<p>
+The list of known org-publish websites is stored in variable <code>org-sites</code>. This is a list of the form: 
+</p>
+
+<p>
+<code>((name org-site-root org-site-html org-site-url) (name org-site-root ...) ...)</code> (see above at <a href="#sec-6">Installing a Site</a>
+</p>
+
+<p>
+Each element of the list has the form (name org-site-root org-site-html org-site-url), where: 
+</p>
+
+<ul class="org-ul">
+<li><code>name</code> is the name of the site
+</li>
+<li><code>org-site-root</code> is the path of the root folder containing the org files
+</li>
+<li><code>org-site-html</code> is the path of the root folder which will hold the exported html files. If it is nil, it is deduced from org-site-root by adding a folder "html" inside the folder org-site-root. 
+</li>
+<li><code>org-site-url</code> is the root url of the site, used to upload the site files with rsync
+</li>
+</ul>
+
+<p>
+The default value of the <code>org-sites</code> list is: 
+</p>
+
+<p>
+(("default" "~/org" nil "earlabor@earlab.org:~/public_html/org/"))
+</p>
+
+<p>
+This means that there is only one default site, named "default".
+</p>
+
+<p>
+To add a new site definition to the list of known sites without making it current use the function <code>add-to-list</code>. Example: 
+</p>
+
+<p>
+(add-to-list 'org-sites '("site2" "~/site2" "~/site2_published" "tomjones@jones.com:~/public_html/"))
+</p>
+
+<p>
+To add a site and make it current use the function <code>org-install-site</code> (see above <a href="#sec-6">Installing a Site</a>) 
+</p>
+</div>
+</div>
+<div id="outline-container-sec-8-2" class="outline-3">
+<h3 id="sec-8-2">Choosing one site to work with, from the list of known sites</h3>
+<div class="outline-text-3" id="text-8-2">
+<ol class="org-ol">
+<li>Type: meta-x org-choose-site
+</li>
+<li>Type the "tab" key to show all known sites
+</li>
+</ol>
+
+<p>
+Choose a site by typing the initial names of its name and using the tab-key to autocomplete the rest of the name. Then type return to install the chosen site as current. 
+</p>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-9" class="outline-2">
+<h2 id="sec-9">Generate projects</h2>
+<div class="outline-text-2" id="text-9">
+<p>
+When adding a new project folder to a site, one must re-scan the folders of the site to add the new project to the list of projects of the site. The function <code>org-build-projects</code> scans the contents of the site folder for config.org files and builds all projects from their contents:
+</p>
+
+<p>
+meta-x org-build-projects
+</p>
+
+<p>
+This is bound to key: control-super-shift-b
+</p>
+</div>
+</div>
+<div id="outline-container-sec-10" class="outline-2">
+<h2 id="sec-10">Publish selected project</h2>
+<div class="outline-text-2" id="text-10">
+<p>
+When a site is large, it may be time consuming to publish all projects each time that some file in one project has changed. To publish a single project from a site use function org-publish-filtering-subprojects:
+</p>
+
+<p>
+meta-x org-publish-filtering-subprojects
+</p>
+
+<p>
+This will let you choose a project interactively from the list of projects defined by the current site.
+</p>
+
+<p>
+This function is bound to key super-B, that is: Command-key (cmd or windows icon) + shift key + b. 
+</p>
+</div>
+</div>
+<div id="outline-container-sec-11" class="outline-2">
+<h2 id="sec-11">Utilities</h2>
+<div class="outline-text-2" id="text-11">
+</div><div id="outline-container-sec-11-1" class="outline-3">
+<h3 id="sec-11-1">Add project files to refile targets</h3>
+<div class="outline-text-3" id="text-11-1">
+<p>
+meta-x org-publish-add-all-files-to-refile-targets
+</p>
+
+<p>
+This adds all 1st and 2nd level sections of all files of all projects to refile targets, making them interactively accessible through a list by org-capture-goto-target (control-u control-c control-w).
+</p>
+</div>
+</div>
+<div id="outline-container-sec-11-2" class="outline-3">
+<h3 id="sec-11-2">Force export of all files</h3>
+<div class="outline-text-3" id="text-11-2">
+<p>
+meta-x org-reset-all-project-files
+</p>
+</div>
+</div>
+<div id="outline-container-sec-11-3" class="outline-3">
+<h3 id="sec-11-3">Dired site directory</h3>
+<div class="outline-text-3" id="text-11-3">
+<p>
+meta-x org-dired-site
+</p>
+</div>
+</div>
+<div id="outline-container-sec-11-4" class="outline-3">
+<h3 id="sec-11-4">Edit configuration files</h3>
+<div class="outline-text-3" id="text-11-4">
+<p>
+meta-x org-publish-edit-all-configs
+</p>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: Ioannis Zannos</p>
+<p class="date">Created: 2013-09-27 Fri 17:56</p>
+<p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.3.1 (<a href="http://orgmode.org">Org</a> mode 8.0.7)</p>
+<p class="xhtml-validation"><a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a></p>
+</div>
+</body>
+</html>
