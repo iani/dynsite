@@ -133,7 +133,7 @@ An important feature is the automatic completion of relative paths of links, whi
 </p>
 
 <p>
-If the path to a css file, which is used for headers defining the page style of a all files in a site, is <code>./css/org.css</code>, then normally a file which is placed in a subfolder of the projects' top folder must change the path of the css style link to <code>./../css/org.css</code>.   Org-mode &gt; 8.0 provides a mechanism for doing this simpler described in the doc (<a href="http://orgmode.org/worg/org-tutorials/org-publish-html-tutorial.html">http://orgmode.org/worg/org-tutorials/org-publish-html-tutorial.html</a>) in paragraph /"Tired of export templates?"/. Dynsite provides a scheme that is simpler than that.  In order to make any link update to a relative path to the root folder, one codes the "root folder" of the project with the string <code>.=</code>. So instead of defining the style path in <code>html-head=extra</code> as:
+If the path to a css file, which is used for headers defining the page style of a all files in a site, is <code>./css/org.css</code>, then normally a file which is placed in a subfolder of the projects' top folder must change the path of the css style link to <code>./../css/org.css</code>.   Org-mode &gt; 8.0 provides a mechanism for doing this simpler described in the doc (<a href="http://orgmode.org/worg/org-tutorials/org-publish-html-tutorial.html">http://orgmode.org/worg/org-tutorials/org-publish-html-tutorial.html</a>) in paragraph /"Tired of export templates?"/. Dynsite provides a scheme that is simpler than that.  In order to make any link update to a relative path to the root folder, one codes the "root folder" of the project with the string <code>{{.}}</code>. So instead of defining the style path in <code>html-head</code> as:
 </p>
 
 <pre class="example">
@@ -145,7 +145,7 @@ one defines it as:
 </p>
 
 <pre class="example">
-&lt;link rel="stylesheet" href="./css/org.css" type="text/css"/&gt;
+&lt;link rel="stylesheet" href="{{.}}/css/org.css" type="text/css"/&gt;
 </pre>
 
 <p>
