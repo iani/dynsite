@@ -383,7 +383,9 @@ This is done using property :folder-exclude"
 ;;	 (org-publish-file file project t))
 ;; IZ: Insert :exclude-regexp filter!
 ;; Above was before insertion. Below is after IZ insertion: 
-;;       replace {{.}} with relative path (for menu links, css etc): 
+;;       replace {{.}} with relative path (for menu links, css etc):
+;; Note: This method is obsolete as of org-mode v. 8.0. 
+;; Therefore replaced by org-html-provide-relative-path below.
 	 (setq org-publish-after-export-hook 
 	       (lambda () 
 		 (replace-string "{{.}}" 
@@ -403,6 +405,20 @@ This is done using property :folder-exclude"
        (when completion-function (run-hooks 'completion-function))
      (org-publish-write-cache-file)))
    (org-publish-expand-projects projects)))
+
+;;; Provide relative path in org-mode 8.0 using filter mechanism
+(defun org-html-provide-relative-path (string backend info)
+  "Provide relative path for link."
+  (when (org-export-derived-backend-p backend 'html)
+    (replace-regexp-in-string 
+     "{{.}}" 
+     (org-make-relpath-string 
+      org-site-root
+      (plist-get info ':input-file))
+     string)))
+
+(add-to-list 'org-export-filter-final-output-functions
+             'org-html-provide-relative-path)
 
 (defun org-make-relpath-string (base-path file-path)
   "create a relative path for reaching base-path from file-path ('./../..' etc)"
