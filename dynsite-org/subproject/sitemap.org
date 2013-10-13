@@ -1,3 +1,0 @@
-#+TITLE: Sitemap
-
-   + [[file:index.org][index]]

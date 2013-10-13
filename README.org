@@ -15,13 +15,17 @@ The source code is contained in publish-setup.el
 
 The documentation is found in dynsite.org (orgmode format) and in dynsite.html (html format). The html was produced by using DynSite itself. The setup is found in orgmode.org/config.org and config.el
 
-To try dynsite out, put the dynsite.el file somewhere in your emacs-lisp load path, 
-and then load this file: 
+To try dynsite out:
 
-config.el
+- Clone the dynsite project from the master branch at: https://github.com/iani/dynsite.git
+- Put dynsite.el (or the entire dynsite folder) somewhere in your emacs-lisp load path, 
+- and then load the file =config.el=
 
-Code: 
+For example: 
+
+#+BEGIN_SRC emacs-lisp
 (load-file "config.el")
+#+END_SRC
 
 Ioannis Zannos [2013-10-13 Sun 17:04]
 

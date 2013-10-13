@@ -1,3 +1,0 @@
-
-
-This is a sample file of a subproject. The name of the site and the author have been changed, but all other publish properties have been inherited from the top-level project. 

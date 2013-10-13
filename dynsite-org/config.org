@@ -1,7 +1,0 @@
-
-* title: "Dyn Site: Define org-publish sites using org itself"
-* author: "Ioannis Zannos"
-* html-head-include-default-style: nil
-* html-head-extra
-<link rel="stylesheet" href="{{.}}/css/org.css" type="text/css"/>
-
