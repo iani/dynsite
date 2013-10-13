@@ -3,5 +3,5 @@
 * author: "Ioannis Zannos"
 * html-head-include-default-style: nil
 * html-head-extra
-<link rel="stylesheet" href="./css/org.css" type="text/css"/>
+<link rel="stylesheet" href="{{.}}/css/org.css" type="text/css"/>
 

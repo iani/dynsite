@@ -1,6 +1,11 @@
 #+TITLE: Sitemap
 
+   + subproject
+     + [[file:subproject/sitemap.org][Sitemap]]
+     + [[file:subproject/index.org][index]]
+   + test_subfolder
+     + [[file:test_subfolder/test_file.org][test_file]]
    + [[file:dynsite-command-reference.org][DynSite Publishing Command Reference]]
    + [[file:dynsite-help.org][DynSite: Dynamic Org 2 HTML Project definition]]
-   + [[file:project-properties.org][Project Properties]]
    + [[file:index.org][index]]
+   + [[file:project-properties.org][Project Properties]]

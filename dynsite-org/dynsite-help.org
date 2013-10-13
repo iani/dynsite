@@ -4,6 +4,25 @@ This is a guide to using the dynamic org-to-html publishing project definition s
 
 DynSite is an extension of the default project publishing scheme of orgmode. Instead of writing project definitions in emacs-lisp as is done in the original orgmode publishing scheme, the present extension allows one to define and customize the projects by putting them in folders and to define their custom parameters in plain text, using orgmode markup.
 
+
+* Overview: Features of the dynsite package
+
+** Minimal setup effort
+The dynsite package builds on the standard org-publish scheme. It provides functions which simplify the definition of groups of projects. Instead of defining projects in emacs-lisp by creating lists of settings for folders and properties, one defines for each site one source folder and one target folder only.  Any number of projects or subprojects can be defined inside a source folder.  Dynsite scans all folders of a site, and creates projects for those folders which contain a file config.org, naming each project after the name of the folder that contains it. Projects in subfolders inherit the configuration parameters of their superfolder-projects. 
+
+** Dynamic completion of relative paths in subfolders
+An important feature is the automatic completion of relative paths of links, which keeps the links to css or other files consistent even in subfolders of a project. For example: 
+
+If the path to a css file, which is used for headers defining the page style of a all files in a site, is =./css/org.css=, then normally a file which is placed in a subfolder of the projects' top folder must change the path of the css style link to =./../css/org.css=.   Org-mode > 8.0 provides a mechanism for doing this simpler described in the doc (http://orgmode.org/worg/org-tutorials/org-publish-html-tutorial.html) in paragraph /"Tired of export templates?"/. Dynsite provides a scheme that is simpler than that.  In order to make any link update to a relative path to the root folder, one codes the "root folder" of the project with the string ={{.}}==. So instead of defining the style path in =html-head=extra= as:
+
+: <link rel="stylesheet" href="./css/org.css" type="text/css"/>
+
+one defines it as: 
+
+: <link rel="stylesheet" href="{{.}}/css/org.css" type="text/css"/>
+
+Dynsite adds a filter to =org-export-filter-final-output-functions= which converts the string ={{.}}= to a relative path consitently pointing to the original css file.  The same holds for all other links inside the org files to be published. 
+
 * Orgmode publishing and DynSite working principles
 
 The html publishing scheme of orgmode allows one to define groups of files which share the same configuration (headers, footers, css style files etc.), so that these files are puglished together with one command.  Such a group of files is called a project.  It is possible to define many projects.  One can publish a project with the command org-publish-project.  To define a project in orgmode one has to code its specifications in emacs-lisp.  Coding this is cumbersome, especially because any html strings that will be included in the files as headers, footers etc. must be coded as lisp-strings, which requires double-escaping html characters such as tag delimiters and other elements.  The present tool, DynSite, makes the project definition process easier by letting one define a projects parameters in a config file written in org mode.  It simplifies the specification of projects  further by grouping these in subfolders of one folder.  A group of projects contained under one folder is called a /site/.  In DynSite, one defines one site by specifying the following three elements: 
@@ -248,7 +267,17 @@ For each folder that contains a config.org file, DynSite generates three project
 The non-org file projects are named by appending "-static" to the name of the org project. 
 The projects containing both the org and the non-org files are named by appending "-all" to the name of the org project. 
 
-Additionally there are generated 3 project groups: "all", "all-all", and "all-static" that contain all org, static and combined org/static projects of a site. 
+Additionally there are generated 3 project groups: "all", "all-all", and "all-static" that contain all org, static and combined org/static projects of a site.  The projects are named after the folder that contains them plus the list of superfolders, so as to be immediately identifiable. For example, the projects of the site defined in folder =dynsite-org= in the present documentation are: 
+
+- "all-all" :: All projects of the website.
+- "dynsite-org-all" :: All projects of the dynsite project (= top project).
+- "dynsite-org" :: The org files of the dynsite project, that is,
+                   the org files, which will be rendered in html.
+- "dynsite-org-static" :: The static project of dynsite, that is, media and other 
+     files which are not rendered but only copied. 
+- "subproject<dynsite-org-all" :: All files of the project contained in folder =subproject=.
+- "subproject<dynsite-org" :: Only the org files of the project =subproject=
+- "subproject<dynsite-org-static" :: Only the static files of the project =subproject=
 
 * Installing a Site
 

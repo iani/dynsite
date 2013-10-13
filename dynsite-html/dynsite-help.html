@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>DynSite: Dynamic Org 2 HTML Project definition</title>
-<!-- 2013-09-27 Fri 17:56 -->
+<!-- 2013-10-13 Sun 20:20 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="generator" content="Org-mode"/>
 <meta name="author" content="Ioannis Zannos"/>
@@ -63,37 +63,43 @@ for the JavaScript code in this tag.
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#sec-1">Orgmode publishing and DynSite working principles</a></li>
-<li><a href="#sec-2">Quick setup</a></li>
-<li><a href="#sec-3">Defining a site</a></li>
-<li><a href="#sec-4">Site File Structure</a>
+<li><a href="#sec-1">Overview: Features of the dynsite package</a>
 <ul>
-<li><a href="#sec-4-1">Source and Target Folders</a></li>
-<li><a href="#sec-4-2">Project Definition</a></li>
+<li><a href="#sec-1-1">Minimal setup effort</a></li>
+<li><a href="#sec-1-2">Dynamic completion of relative paths in subfolders</a></li>
 </ul>
 </li>
-<li><a href="#sec-5">The Project List</a>
+<li><a href="#sec-2">Orgmode publishing and DynSite working principles</a></li>
+<li><a href="#sec-3">Quick setup</a></li>
+<li><a href="#sec-4">Defining a site</a></li>
+<li><a href="#sec-5">Site File Structure</a>
 <ul>
-<li><a href="#sec-5-1">Project inheritance</a></li>
-<li><a href="#sec-5-2">Org and static projects</a></li>
+<li><a href="#sec-5-1">Source and Target Folders</a></li>
+<li><a href="#sec-5-2">Project Definition</a></li>
 </ul>
 </li>
-<li><a href="#sec-6">Installing a Site</a></li>
-<li><a href="#sec-7">Publish+Upload a Site</a></li>
-<li><a href="#sec-8">Working with multiple sites</a>
+<li><a href="#sec-6">The Project List</a>
 <ul>
-<li><a href="#sec-8-1">Adding a site</a></li>
-<li><a href="#sec-8-2">Choosing one site to work with, from the list of known sites</a></li>
+<li><a href="#sec-6-1">Project inheritance</a></li>
+<li><a href="#sec-6-2">Org and static projects</a></li>
 </ul>
 </li>
-<li><a href="#sec-9">Generate projects</a></li>
-<li><a href="#sec-10">Publish selected project</a></li>
-<li><a href="#sec-11">Utilities</a>
+<li><a href="#sec-7">Installing a Site</a></li>
+<li><a href="#sec-8">Publish+Upload a Site</a></li>
+<li><a href="#sec-9">Working with multiple sites</a>
 <ul>
-<li><a href="#sec-11-1">Add project files to refile targets</a></li>
-<li><a href="#sec-11-2">Force export of all files</a></li>
-<li><a href="#sec-11-3">Dired site directory</a></li>
-<li><a href="#sec-11-4">Edit configuration files</a></li>
+<li><a href="#sec-9-1">Adding a site</a></li>
+<li><a href="#sec-9-2">Choosing one site to work with, from the list of known sites</a></li>
+</ul>
+</li>
+<li><a href="#sec-10">Generate projects</a></li>
+<li><a href="#sec-11">Publish selected project</a></li>
+<li><a href="#sec-12">Utilities</a>
+<ul>
+<li><a href="#sec-12-1">Add project files to refile targets</a></li>
+<li><a href="#sec-12-2">Force export of all files</a></li>
+<li><a href="#sec-12-3">Dired site directory</a></li>
+<li><a href="#sec-12-4">Edit configuration files</a></li>
 </ul>
 </li>
 </ul>
@@ -107,9 +113,50 @@ This is a guide to using the dynamic org-to-html publishing project definition s
 DynSite is an extension of the default project publishing scheme of orgmode. Instead of writing project definitions in emacs-lisp as is done in the original orgmode publishing scheme, the present extension allows one to define and customize the projects by putting them in folders and to define their custom parameters in plain text, using orgmode markup.
 </p>
 
+
 <div id="outline-container-sec-1" class="outline-2">
-<h2 id="sec-1">Orgmode publishing and DynSite working principles</h2>
+<h2 id="sec-1">Overview: Features of the dynsite package</h2>
 <div class="outline-text-2" id="text-1">
+</div><div id="outline-container-sec-1-1" class="outline-3">
+<h3 id="sec-1-1">Minimal setup effort</h3>
+<div class="outline-text-3" id="text-1-1">
+<p>
+The dynsite package builds on the standard org-publish scheme. It provides functions which simplify the definition of groups of projects. Instead of defining projects in emacs-lisp by creating lists of settings for folders and properties, one defines for each site one source folder and one target folder only.  Any number of projects or subprojects can be defined inside a source folder.  Dynsite scans all folders of a site, and creates projects for those folders which contain a file config.org, naming each project after the name of the folder that contains it. Projects in subfolders inherit the configuration parameters of their superfolder-projects. 
+</p>
+</div>
+</div>
+<div id="outline-container-sec-1-2" class="outline-3">
+<h3 id="sec-1-2">Dynamic completion of relative paths in subfolders</h3>
+<div class="outline-text-3" id="text-1-2">
+<p>
+An important feature is the automatic completion of relative paths of links, which keeps the links to css or other files consistent even in subfolders of a project. For example: 
+</p>
+
+<p>
+If the path to a css file, which is used for headers defining the page style of a all files in a site, is <code>./css/org.css</code>, then normally a file which is placed in a subfolder of the projects' top folder must change the path of the css style link to <code>./../css/org.css</code>.   Org-mode &gt; 8.0 provides a mechanism for doing this simpler described in the doc (<a href="http://orgmode.org/worg/org-tutorials/org-publish-html-tutorial.html">http://orgmode.org/worg/org-tutorials/org-publish-html-tutorial.html</a>) in paragraph /"Tired of export templates?"/. Dynsite provides a scheme that is simpler than that.  In order to make any link update to a relative path to the root folder, one codes the "root folder" of the project with the string <code>.=</code>. So instead of defining the style path in <code>html-head=extra</code> as:
+</p>
+
+<pre class="example">
+&lt;link rel="stylesheet" href="./css/org.css" type="text/css"/&gt;
+</pre>
+
+<p>
+one defines it as: 
+</p>
+
+<pre class="example">
+&lt;link rel="stylesheet" href="./css/org.css" type="text/css"/&gt;
+</pre>
+
+<p>
+Dynsite adds a filter to <code>org-export-filter-final-output-functions</code> which converts the string <code>.</code> to a relative path consitently pointing to the original css file.  The same holds for all other links inside the org files to be published. 
+</p>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-2" class="outline-2">
+<h2 id="sec-2">Orgmode publishing and DynSite working principles</h2>
+<div class="outline-text-2" id="text-2">
 <p>
 The html publishing scheme of orgmode allows one to define groups of files which share the same configuration (headers, footers, css style files etc.), so that these files are puglished together with one command.  Such a group of files is called a project.  It is possible to define many projects.  One can publish a project with the command org-publish-project.  To define a project in orgmode one has to code its specifications in emacs-lisp.  Coding this is cumbersome, especially because any html strings that will be included in the files as headers, footers etc. must be coded as lisp-strings, which requires double-escaping html characters such as tag delimiters and other elements.  The present tool, DynSite, makes the project definition process easier by letting one define a projects parameters in a config file written in org mode.  It simplifies the specification of projects  further by grouping these in subfolders of one folder.  A group of projects contained under one folder is called a <i>site</i>.  In DynSite, one defines one site by specifying the following three elements: 
 </p>
@@ -159,17 +206,17 @@ One can define any number of sites in DynSite. But only one site is current at a
 </p>
 </div>
 </div>
-<div id="outline-container-sec-2" class="outline-2">
-<h2 id="sec-2">Quick setup</h2>
-<div class="outline-text-2" id="text-2">
+<div id="outline-container-sec-3" class="outline-2">
+<h2 id="sec-3">Quick setup</h2>
+<div class="outline-text-2" id="text-3">
 <p>
 @&lt;b&gt;For a summary of all commands and quick configuration guide for setting up a site see <a href="./dynsite-command-reference.html">here</a>.@&lt;/b&gt;
 </p>
 </div>
 </div>
-<div id="outline-container-sec-3" class="outline-2">
-<h2 id="sec-3">Defining a site</h2>
-<div class="outline-text-2" id="text-3">
+<div id="outline-container-sec-4" class="outline-2">
+<h2 id="sec-4">Defining a site</h2>
+<div class="outline-text-2" id="text-4">
 <p>
 Here is the definition of a site which takes its source files (org) from <code>~/SitesSource/</code> and publishes the result in <code>~/Sites/</code>. (Note: <code>~/Sites/</code> is the default folder for a user's personal home page files in MacOS X). 
 </p>
@@ -194,12 +241,12 @@ In MacOS X one can browse the resulting site by accessing it via the <code>file<
 </div>
 </div>
 
-<div id="outline-container-sec-4" class="outline-2">
-<h2 id="sec-4">Site File Structure</h2>
-<div class="outline-text-2" id="text-4">
-</div><div id="outline-container-sec-4-1" class="outline-3">
-<h3 id="sec-4-1">Source and Target Folders</h3>
-<div class="outline-text-3" id="text-4-1">
+<div id="outline-container-sec-5" class="outline-2">
+<h2 id="sec-5">Site File Structure</h2>
+<div class="outline-text-2" id="text-5">
+</div><div id="outline-container-sec-5-1" class="outline-3">
+<h3 id="sec-5-1">Source and Target Folders</h3>
+<div class="outline-text-3" id="text-5-1">
 <p>
 For each site defned with DynSite expects all org-to-html projects to be stored as subfolders of one single folder. For example, if one has 3 projects named project1, project2 and project3, one could place them in one folder named org as follows: 
 </p>
@@ -246,13 +293,13 @@ These projects are published in subfolders of the single target folder specified
 </p>
 
 <p>
-It is possible to work with several different sites, where each site has its own source folder (the org project files), its own target folder (the published html files) and a url for uploading the rendered html files to a server using rsync. See <a href="#sec-8">Working with multiple sites</a> below. 
+It is possible to work with several different sites, where each site has its own source folder (the org project files), its own target folder (the published html files) and a url for uploading the rendered html files to a server using rsync. See <a href="#sec-9">Working with multiple sites</a> below. 
 </p>
 </div>
 </div>
-<div id="outline-container-sec-4-2" class="outline-3">
-<h3 id="sec-4-2">Project Definition</h3>
-<div class="outline-text-3" id="text-4-2">
+<div id="outline-container-sec-5-2" class="outline-3">
+<h3 id="sec-5-2">Project Definition</h3>
+<div class="outline-text-3" id="text-5-2">
 <p>
 There is only one rule for defining a project: 
 </p>
@@ -422,10 +469,10 @@ Example:
 <p>
 (add-to-list 'org-sites
       '(
-        "larigot-earlab" 
-        "~/Dropbox/orgshared/sites/org/larigot-tests" 
-        "~/Dropbox/orgshared/sites/html/larigot-tests" 
-        "earlabor@earlab.org:public_html/larigot-tests/"))
+    "larigot-earlab" 
+    "~/Dropbox/orgshared/sites/org/larigot-tests" 
+    "~/Dropbox/orgshared/sites/html/larigot-tests" 
+    "earlabor@earlab.org:public_html/larigot-tests/"))
 </p>
 
 </div>
@@ -437,12 +484,12 @@ To add a site and make it current use the function org-install-site as described
 </div>
 </div>
 
-<div id="outline-container-sec-5" class="outline-2">
-<h2 id="sec-5">The Project List</h2>
-<div class="outline-text-2" id="text-5">
-</div><div id="outline-container-sec-5-1" class="outline-3">
-<h3 id="sec-5-1">Project inheritance</h3>
-<div class="outline-text-3" id="text-5-1">
+<div id="outline-container-sec-6" class="outline-2">
+<h2 id="sec-6">The Project List</h2>
+<div class="outline-text-2" id="text-6">
+</div><div id="outline-container-sec-6-1" class="outline-3">
+<h3 id="sec-6-1">Project inheritance</h3>
+<div class="outline-text-3" id="text-6-1">
 <p>
 If a project folder <i>a</i> contains a folder <i>b</i> that defines another project, then the project defined in folder <i>b</i> inherits the properties of project <i>a</i>. The property values set in <i>b</i> overwrite any properties with the same name set by <i>a</i>. <i>b</i> is called a subproject of <i>a</i>, and <i>a</i> is called a superproject of <i>b</i>.
 </p>
@@ -461,9 +508,9 @@ then the project contained in folder ./mainproject/subproject will be called sub
 </p>
 </div>
 </div>
-<div id="outline-container-sec-5-2" class="outline-3">
-<h3 id="sec-5-2">Org and static projects</h3>
-<div class="outline-text-3" id="text-5-2">
+<div id="outline-container-sec-6-2" class="outline-3">
+<h3 id="sec-6-2">Org and static projects</h3>
+<div class="outline-text-3" id="text-6-2">
 <p>
 For each folder that contains a config.org file, DynSite generates three projects: 
 </p>
@@ -483,14 +530,33 @@ The projects containing both the org and the non-org files are named by appendin
 </p>
 
 <p>
-Additionally there are generated 3 project groups: "all", "all-all", and "all-static" that contain all org, static and combined org/static projects of a site. 
+Additionally there are generated 3 project groups: "all", "all-all", and "all-static" that contain all org, static and combined org/static projects of a site.  The projects are named after the folder that contains them plus the list of superfolders, so as to be immediately identifiable. For example, the projects of the site defined in folder <code>dynsite-org</code> in the present documentation are: 
 </p>
+
+<dl class="org-dl">
+<dt> "all-all" </dt><dd>All projects of the website.
+</dd>
+<dt> "dynsite-org-all" </dt><dd>All projects of the dynsite project (= top project).
+</dd>
+<dt> "dynsite-org" </dt><dd>The org files of the dynsite project, that is,
+the org files, which will be rendered in html.
+</dd>
+<dt> "dynsite-org-static" </dt><dd>The static project of dynsite, that is, media and other 
+files which are not rendered but only copied. 
+</dd>
+<dt> "subproject&lt;dynsite-org-all" </dt><dd>All files of the project contained in folder <code>subproject</code>.
+</dd>
+<dt> "subproject&lt;dynsite-org" </dt><dd>Only the org files of the project <code>subproject</code>
+</dd>
+<dt> "subproject&lt;dynsite-org-static" </dt><dd>Only the static files of the project <code>subproject</code>
+</dd>
+</dl>
 </div>
 </div>
 </div>
-<div id="outline-container-sec-6" class="outline-2">
-<h2 id="sec-6">Installing a Site</h2>
-<div class="outline-text-2" id="text-6">
+<div id="outline-container-sec-7" class="outline-2">
+<h2 id="sec-7">Installing a Site</h2>
+<div class="outline-text-2" id="text-7">
 <p>
 Run this to install your own site in the list of sites and make it the current site to work on: 
 </p>
@@ -520,9 +586,9 @@ Example:
 </pre>
 </div>
 </div>
-<div id="outline-container-sec-7" class="outline-2">
-<h2 id="sec-7">Publish+Upload a Site</h2>
-<div class="outline-text-2" id="text-7">
+<div id="outline-container-sec-8" class="outline-2">
+<h2 id="sec-8">Publish+Upload a Site</h2>
+<div class="outline-text-2" id="text-8">
 <p>
 (meta-x:) org-republish-and-upload-site
 </p>
@@ -536,18 +602,18 @@ This is the most basic command for publishing a site. It generates all the proje
 </p>
 </div>
 </div>
-<div id="outline-container-sec-8" class="outline-2">
-<h2 id="sec-8">Working with multiple sites</h2>
-<div class="outline-text-2" id="text-8">
-</div><div id="outline-container-sec-8-1" class="outline-3">
-<h3 id="sec-8-1">Adding a site</h3>
-<div class="outline-text-3" id="text-8-1">
+<div id="outline-container-sec-9" class="outline-2">
+<h2 id="sec-9">Working with multiple sites</h2>
+<div class="outline-text-2" id="text-9">
+</div><div id="outline-container-sec-9-1" class="outline-3">
+<h3 id="sec-9-1">Adding a site</h3>
+<div class="outline-text-3" id="text-9-1">
 <p>
 The list of known org-publish websites is stored in variable <code>org-sites</code>. This is a list of the form: 
 </p>
 
 <p>
-<code>((name org-site-root org-site-html org-site-url) (name org-site-root ...) ...)</code> (see above at <a href="#sec-6">Installing a Site</a>
+<code>((name org-site-root org-site-html org-site-url) (name org-site-root ...) ...)</code> (see above at <a href="#sec-7">Installing a Site</a>
 </p>
 
 <p>
@@ -586,13 +652,13 @@ To add a new site definition to the list of known sites without making it curren
 </p>
 
 <p>
-To add a site and make it current use the function <code>org-install-site</code> (see above <a href="#sec-6">Installing a Site</a>) 
+To add a site and make it current use the function <code>org-install-site</code> (see above <a href="#sec-7">Installing a Site</a>) 
 </p>
 </div>
 </div>
-<div id="outline-container-sec-8-2" class="outline-3">
-<h3 id="sec-8-2">Choosing one site to work with, from the list of known sites</h3>
-<div class="outline-text-3" id="text-8-2">
+<div id="outline-container-sec-9-2" class="outline-3">
+<h3 id="sec-9-2">Choosing one site to work with, from the list of known sites</h3>
+<div class="outline-text-3" id="text-9-2">
 <ol class="org-ol">
 <li>Type: meta-x org-choose-site
 </li>
@@ -606,9 +672,9 @@ Choose a site by typing the initial names of its name and using the tab-key to a
 </div>
 </div>
 </div>
-<div id="outline-container-sec-9" class="outline-2">
-<h2 id="sec-9">Generate projects</h2>
-<div class="outline-text-2" id="text-9">
+<div id="outline-container-sec-10" class="outline-2">
+<h2 id="sec-10">Generate projects</h2>
+<div class="outline-text-2" id="text-10">
 <p>
 When adding a new project folder to a site, one must re-scan the folders of the site to add the new project to the list of projects of the site. The function <code>org-build-projects</code> scans the contents of the site folder for config.org files and builds all projects from their contents:
 </p>
@@ -622,9 +688,9 @@ This is bound to key: control-super-shift-b
 </p>
 </div>
 </div>
-<div id="outline-container-sec-10" class="outline-2">
-<h2 id="sec-10">Publish selected project</h2>
-<div class="outline-text-2" id="text-10">
+<div id="outline-container-sec-11" class="outline-2">
+<h2 id="sec-11">Publish selected project</h2>
+<div class="outline-text-2" id="text-11">
 <p>
 When a site is large, it may be time consuming to publish all projects each time that some file in one project has changed. To publish a single project from a site use function org-publish-filtering-subprojects:
 </p>
@@ -642,12 +708,12 @@ This function is bound to key super-B, that is: Command-key (cmd or windows icon
 </p>
 </div>
 </div>
-<div id="outline-container-sec-11" class="outline-2">
-<h2 id="sec-11">Utilities</h2>
-<div class="outline-text-2" id="text-11">
-</div><div id="outline-container-sec-11-1" class="outline-3">
-<h3 id="sec-11-1">Add project files to refile targets</h3>
-<div class="outline-text-3" id="text-11-1">
+<div id="outline-container-sec-12" class="outline-2">
+<h2 id="sec-12">Utilities</h2>
+<div class="outline-text-2" id="text-12">
+</div><div id="outline-container-sec-12-1" class="outline-3">
+<h3 id="sec-12-1">Add project files to refile targets</h3>
+<div class="outline-text-3" id="text-12-1">
 <p>
 meta-x org-publish-add-all-files-to-refile-targets
 </p>
@@ -657,25 +723,25 @@ This adds all 1st and 2nd level sections of all files of all projects to refile 
 </p>
 </div>
 </div>
-<div id="outline-container-sec-11-2" class="outline-3">
-<h3 id="sec-11-2">Force export of all files</h3>
-<div class="outline-text-3" id="text-11-2">
+<div id="outline-container-sec-12-2" class="outline-3">
+<h3 id="sec-12-2">Force export of all files</h3>
+<div class="outline-text-3" id="text-12-2">
 <p>
 meta-x org-reset-all-project-files
 </p>
 </div>
 </div>
-<div id="outline-container-sec-11-3" class="outline-3">
-<h3 id="sec-11-3">Dired site directory</h3>
-<div class="outline-text-3" id="text-11-3">
+<div id="outline-container-sec-12-3" class="outline-3">
+<h3 id="sec-12-3">Dired site directory</h3>
+<div class="outline-text-3" id="text-12-3">
 <p>
 meta-x org-dired-site
 </p>
 </div>
 </div>
-<div id="outline-container-sec-11-4" class="outline-3">
-<h3 id="sec-11-4">Edit configuration files</h3>
-<div class="outline-text-3" id="text-11-4">
+<div id="outline-container-sec-12-4" class="outline-3">
+<h3 id="sec-12-4">Edit configuration files</h3>
+<div class="outline-text-3" id="text-12-4">
 <p>
 meta-x org-publish-edit-all-configs
 </p>
@@ -685,7 +751,7 @@ meta-x org-publish-edit-all-configs
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: Ioannis Zannos</p>
-<p class="date">Created: 2013-09-27 Fri 17:56</p>
+<p class="date">Created: 2013-10-13 Sun 20:20</p>
 <p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.3.1 (<a href="http://orgmode.org">Org</a> mode 8.0.7)</p>
 <p class="xhtml-validation"><a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a></p>
 </div>

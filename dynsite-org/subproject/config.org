@@ -1,0 +1,3 @@
+
+* title: "Sample Subproject"
+* author: "X Y"

@@ -1,0 +1,6 @@
+
+* Testing!
+
+This file demonstrates how the relative path pointing to the css style definition for a project is automatically updated to point to the original link defined by the projects config.org definition.  The document produced by org-publish from the present file uses ../css/org.css as style.  It shares the same look on the browser as the other files of the project. 
+
+
