@@ -13,11 +13,11 @@ The dynsite package builds on the standard org-publish scheme. It provides funct
 ** Dynamic completion of relative paths in subfolders
 An important feature is the automatic completion of relative paths of links, which keeps the links to css or other files consistent even in subfolders of a project. For example: 
 
-If the path to a css file, which is used for headers defining the page style of a all files in a site, is =./css/org.css=, then normally a file which is placed in a subfolder of the projects' top folder must change the path of the css style link to =./../css/org.css=.   Org-mode > 8.0 provides a mechanism for doing this simpler described in the doc (http://orgmode.org/worg/org-tutorials/org-publish-html-tutorial.html) in paragraph /"Tired of export templates?"/. Dynsite provides a scheme that is simpler than that.  In order to make any link update to a relative path to the root folder, one codes the "root folder" of the project with the string ={{.}}==. So instead of defining the style path in =html-head=extra= as:
+If the path to a css file, which is used for headers defining the page style of a all files in a site, is =./css/org.css=, then normally a file which is placed in a subfolder of the projects' top folder must change the path of the css style link to =./../css/org.css=.   Org-mode > 8.0 provides a mechanism for doing this simpler described in the doc (http://orgmode.org/worg/org-tutorials/org-publish-html-tutorial.html) in paragraph /"Tired of export templates?"/. Dynsite provides a scheme that is simpler than that.  In order to make any link update to a relative path to the root folder, one codes the "root folder" of the project with the string ={{.}}=. So instead of defining the style path in =html-head= as:
 
 : <link rel="stylesheet" href="./css/org.css" type="text/css"/>
 
-one defines it as: 
+one defines it as:
 
 : <link rel="stylesheet" href="{{.}}/css/org.css" type="text/css"/>
 
