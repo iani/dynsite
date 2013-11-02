@@ -428,7 +428,7 @@ This is done using property :folder-exclude"
 		(length (split-string (file-name-directory file-path) "/"))
 		(length (split-string base-path "/")))))
     (dotimes (number
-	      (- depth 1) 
+	      (- depth 1)
 	      path)
       (setq path (concat path "/..")))))
 
