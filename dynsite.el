@@ -417,6 +417,7 @@ This is done using property :folder-exclude"
       (plist-get info ':input-file))
      string)))
 
+;;; Add relative path filter to export final output functions
 (add-to-list 'org-export-filter-final-output-functions
              'org-html-provide-relative-path)
 
@@ -459,7 +460,6 @@ This is done using property :folder-exclude"
 	(setq org-agenda-files (cons file org-agenda-files)))) 
   (message "all site files have been added to the agenda"))
 
-
 (global-set-key (kbd "s-R") 'org-publish-add-all-files-to-refile-targets)
 
 (defun org-reset-all-project-files ()
@@ -482,6 +482,30 @@ This is done using property :folder-exclude"
   (message (format "you chose: %s" (cadr site)))
   (dired (cadr site)))
 
+(defun org-add-site ()
+  "Add site definition from path of current file.
+Origin path is path of current file.
+Target path is path of currnet file + -site.
+Name is name of folder containing current file"
+  (interactive)
+  (let* (
+         (source 
+          (replace-regexp-in-string "/$" "" (file-name-directory (buffer-file-name))))
+         (target (concat source "-site"))
+         (site-name (car (last (split-string source "/")))))
+    (org-install-site (list site-name source target))
+    (message "added site: %s" site-name)))
+
+(defun org-make-sitemap ()
+  "Create global sitemap for entire site, by finding existing sitemaps
+contained in the site's project folders. 
+This function is to be added as advice to org-publish, so the global sitemap is 
+updated every time a project is published."
+
+;; FIXME: to complete ...: 
+  (find-lisp-find-files (nth 2 org-current-site) "sitemap.html")
+)
+
 ;; Republish all files of the current site and upload them
 (defun org-republish-and-upload-site ()
   "re-construct site definition, re-export all files, upload"
@@ -495,6 +519,7 @@ This is done using property :folder-exclude"
   (org-upload-site-with-rsync-noninteractive))
 
 (global-set-key (kbd "C-M-s-P") 'org-republish-and-upload-site)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; Example of recursive function
