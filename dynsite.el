@@ -149,6 +149,9 @@
 
 (global-set-key (kbd "C-s-B") 'org-build-projects)
 
+;;; FIXME: org-build-config-file-data must be rewritten.  
+;;; Inheritance of project properties does not work consistently.
+
 (defun org-build-config-file-data ()
   "find all config.org files and scan their contents. Then
    build org-config-file-data"
@@ -325,7 +328,7 @@ this function is called by other interactive functions
    headings of the format <propertyname>: <property> create property-value pair"
   (let ((property-p (string-match "^\\([^: ]*\\): \\(.*\\)" heading)))
     (if property-p
-	(cons (match-string 1 heading) (car (read-from-string (match-string 2 heading))))
+        (cons (match-string 1 heading) (car (read-from-string (match-string 2 heading))))
       (cons heading body))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -483,7 +486,7 @@ This is done using property :folder-exclude"
   (dired (cadr site)))
 
 (defun org-add-site ()
-  "Add site definition from path of current file.
+  "Add site definition, guessing all details from path of current file.
 Origin path is path of current file.
 Target path is path of currnet file + -site.
 Name is name of folder containing current file"
@@ -495,6 +498,67 @@ Name is name of folder containing current file"
          (site-name (car (last (split-string source "/")))))
     (org-install-site (list site-name source target))
     (message "added site: %s" site-name)))
+
+(defun org-insert-site-template ()
+ "Insert template for site definition, guessing all details from path of current file.
+Origin path is path of current file.
+Target path is path of currnet file + -site.
+Name is name of folder containing current file"
+  (interactive)
+  (let* (
+         (source 
+          (replace-regexp-in-string "/$" "" (file-name-directory (buffer-file-name))))
+         (target (concat source "-site"))
+         (site-name (car (last (split-string source "/")))))
+    (insert-string "(require 'dynsite)\n\n")
+    (insert-string 
+     (format 
+      "(org-install-site\n\t'(\"%s\"\n\t\"%s\"\n\t\"%s\"))"
+      site-name
+      source
+      target))))
+
+
+;;; Overwrite org-html-toc to enable customizing the table of contents header.
+;;; The heading for the table of contents is read from project property named
+;;; toc-heading.  This can be set like the other properties in config.org.
+(defun org-html-toc (depth info)
+  "Build a table of contents.
+DEPTH is an integer specifying the depth of the table.  INFO is a
+plist used as a communication channel.  Return the table of
+contents as a string, or nil if it is empty.
+The heading for the table of contents is provided by project property named
+toc-heading.  This can be set like the other properties in config.org."
+  (let ((toc-entries
+         (mapcar (lambda (headline)
+                   (cons (org-html--format-toc-headline headline info)
+                         (org-export-get-relative-level headline info)))
+                 (org-export-collect-headlines info depth))))
+    (when toc-entries
+      (concat "<div id=\"table-of-contents\">\n"
+              (format "<h%d>%s</h%d>\n"
+                      org-html-toplevel-hlevel
+                      (org-html--translate (plist-get info :toc-heading) info)
+                      ;;                      (org-html--translate "TOC" info)
+                      org-html-toplevel-hlevel)
+              "<div id=\"text-table-of-contents\">"
+              (org-html--toc-text toc-entries)
+              "</div>\n"
+              "</div>\n"))))
+
+(defun org-republish-current-project ()
+  "..."
+  (interactive)
+  (org-build-projects)
+  (org-reset-all-project-files)
+  (org-publish-current-project))
+
+(defun org-republish-all-projects ()
+  "..."
+  (interactive)
+  (org-build-projects)
+  (org-reset-all-project-files)
+  (org-publish-project "all-all"))
 
 (defun org-make-sitemap ()
   "Create global sitemap for entire site, by finding existing sitemaps
